@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+class User {
+    -String username
+    -String password
+    -Stack handCards
+    -int coins
+}
+
+abstract class Card {
+    -String name
+    -final int damage
+    -enum element elementType
+
+}
+
+class SpellCard extends Card {
+
+}
+
+class MonsterCard extends Card {
+
+}
+
+enum element {
+       FIRE,
+       WATER,
+       NORMAL
+}
+
+class Stack {
+    -List<Card> cards
+}
+
+class Package {
+    -List<Card> cards
+}
+
+class Battle {
+    -Deck deck1
+    -Deck deck2
+}
+
+class Deck {
+    -List<Card> cardsInDeck
+}
+@enduml
