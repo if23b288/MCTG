@@ -1,0 +1,118 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+package MCTG.models {
+    package cards {
+        Deck -- Card
+        Stack -- Card
+        Package -- Card
+        Element -- Card
+
+        abstract class CardCollection {
+            - List<Card> cards
+
+            + void addCard(Card newCard)
+        }
+        
+        class Deck extends CardCollection {
+            + Card getRandomCard()
+            + void removeCard(Card cardToRm)
+        }
+
+        class Stack extends CardCollection
+
+        class Package extends CardCollection {
+            + void generatePackage()
+        }
+
+        abstract class Card {
+            - String name
+            - int dmg
+            - enum Element elementType
+
+            + void printCard()
+        }
+
+        class SpellCard extends Card {
+            + void printCard()
+        }
+
+        package monster {
+            MonsterCard - Monster
+
+            Card <|-- MonsterCard
+
+            class MonsterCard {
+                - Monster monsterType;
+
+                + void printCard()
+            }
+
+            enum Monster {
+                GOBLINS,
+                DRAGONS,
+                WIZARD,
+                KNIGHTS,
+                KRAKEN,
+                FIREELVES
+            }
+        }
+
+        enum Element {
+            FIRE,
+            WATER,
+            NORMAL
+        }
+    }
+
+    package service {
+        Store -- Trade
+        Trade -- Card
+        Shop -- Package
+
+        class Battle {
+            - User player1
+            - User player2
+
+            + void startBattle()
+            - void playRound(Card card1, Card card2)
+            - void specialRules(Card card1, Card card2)
+            - void calcDamage(Card card1, Card card2)
+            - void moveCardToWinner(Card card, User winner)
+        }
+
+        class Store {
+            - List<Trade> trades
+
+            + addTradeToStore(Trade newTrade)
+        }
+
+        class Trade {
+            - Card tradeInCard
+            - String cardType
+            - int minDamage
+
+            + void acceptTrade()
+        }
+
+        class Shop {
+            + Package generatePackage()
+        }
+    }
+
+    Stack -- User
+    Deck -- User
+    Battle -- User
+
+    class User {
+        - String username
+        - String password
+        - Stack stack
+        - Deck deck
+        - int elo = 100
+
+        + void register(String username, String password)
+        + void login(String username, String password)
+    }
+}
+@enduml
