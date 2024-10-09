@@ -1,6 +1,6 @@
 package MCTG.core.models.cards;
 
-public class Card {
+public abstract class Card {
     private String name;
     private int damage = 0;
     private Element elementType;

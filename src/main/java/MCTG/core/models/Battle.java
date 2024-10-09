@@ -1,8 +1,6 @@
-package MCTG.core.service;
+package MCTG.core.models;
 
-import MCTG.core.models.User;
 import MCTG.core.models.cards.Card;
-import MCTG.core.models.cards.Deck;
 
 public class Battle {
     private User player1;

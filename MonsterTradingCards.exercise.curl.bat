@@ -9,7 +9,7 @@ echo Syntax: $1 [pause]
 echo - pause: optional, if set, the script will pause after each block
 echo.
 
-set "pauseFlag=0"
+set "pauseFlag=1"
 for %%a in (%*) do (
     if /I "%%a"=="pause" (
         set "pauseFlag=1"

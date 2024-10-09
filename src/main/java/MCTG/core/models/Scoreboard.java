@@ -1,4 +1,4 @@
-package MCTG.core.service;
+package MCTG.core.models;
 
 import java.util.Map;
 
