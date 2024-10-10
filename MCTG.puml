@@ -1,84 +1,92 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 
-package MCTG.models {
-    package cards {
-        Deck -- Card
-        Stack -- Card
-        Package -- Card
-        Element -- Card
-
-        abstract class CardCollection {
-            - List<Card> cards
-
-            + void addCard(Card newCard)
-        }
-        
-        class Deck extends CardCollection {
-            + Card getRandomCard()
-            + void removeCard(Card cardToRm)
+package api {
+    package controller {
+        abstract class Controller {
+            - ObjectMapper objectMapper
         }
 
-        class Stack extends CardCollection
-
-        class Package extends CardCollection {
-            + void generatePackage()
+        class SessionController extends Controller {
+            + Response login(Request request, Database database)
         }
 
-        abstract class Card {
-            - String name
-            - int dmg
-            - enum Element elementType
-
-            + void printCard()
+        class UserController extends Controller {
+            + Response addUser(Request request, Database database)
         }
+    }
+}
 
-        class SpellCard extends Card {
-            + void printCard()
-        }
+package core {
+    package models {
+        package cards {
+            abstract class CardCollection {
+                - List<Card> cards
 
-        package monster {
-            MonsterCard - Monster
+                + void addCard(Card newCard)
+                + void removeCard(Card removeCard)
+            }
 
-            Card <|-- MonsterCard
+            class Deck extends CardCollection {
+                + Card getRandomCard()
+                + void removeCard(Card cardToRm)
+            }
 
-            class MonsterCard {
-                - Monster monsterType;
+            class Stack extends CardCollection
+
+            class Package extends CardCollection {
+                + void generatePackage()
+            }
+
+            abstract class Card {
+                - String name
+                - int dmg
+                - enum Element elementType
 
                 + void printCard()
             }
 
-            enum Monster {
-                GOBLINS,
-                DRAGONS,
-                WIZARD,
-                KNIGHTS,
-                KRAKEN,
-                FIREELVES
+            class SpellCard extends Card {
+                + void toString()
+            }
+
+            enum Element {
+                FIRE,
+                WATER,
+                NORMAL
+            }
+
+            package monster {
+                class MonsterCard {
+                    - Monster monsterType;
+
+                    + void printCard()
+                }
+
+                enum Monster {
+                    GOBLINS,
+                    DRAGONS,
+                    WIZARD,
+                    KNIGHTS,
+                    KRAKEN,
+                    FIREELVES
+                }
             }
         }
 
-        enum Element {
-            FIRE,
-            WATER,
-            NORMAL
+        class User {
+            - String username
+            - String password
+            - Stack stack
+            - Deck deck
+            - int elo = 100
+
+            + void register(String username, String password)
+            + void login(String username, String password)
         }
-    }
 
-    package service {
-        Store -- Trade
-        Trade -- Card
-        Shop -- Package
-
-        class Battle {
-            - User player1
-            - User player2
-
-            + void startBattle()
-            - void playRound(Card card1, Card card2)
-            - void specialRules(Card card1, Card card2)
-            - void calcDamage(Card card1, Card card2)
-            - void moveCardToWinner(Card card, User winner)
+        class Shop {
+            + Package generatePackage()
         }
 
         class Store {
@@ -95,24 +103,184 @@ package MCTG.models {
             + void acceptTrade()
         }
 
-        class Shop {
-            + Package generatePackage()
+        class Battle {
+            - User player1
+            - User player2
+
+            + void startBattle()
+            - void playRound(Card card1, Card card2)
+            - void specialRules(Card card1, Card card2)
+            - void calcDamage(Card card1, Card card2)
+            - void moveCardToWinner(Card card, User winner)
         }
     }
 
-    Stack -- User
-    Deck -- User
-    Battle -- User
+    package service {
+        interface Service {
+            + Response handleRequest(Request request, Database database)
+        }
 
-    class User {
-        - String username
-        - String password
-        - Stack stack
-        - Deck deck
-        - int elo = 100
+        class SessionService {
+            - SessionController sessionController
+        }
 
-        + void register(String username, String password)
-        + void login(String username, String password)
+        class UserService {
+            - UserController userController
+        }
     }
 }
+
+package persistence {
+    class Database {
+        - List<User> users
+
+        + void addUser(User user)
+        + User getUser(String username)
+    }
+}
+
+package server {
+    package http {
+        enum ContentType {
+            PLAIN_TEXT,
+            HTML,
+            JSON
+        }
+
+        enum HttpStatus {
+            OK,
+            CREATED,
+            BAD_REQUEST,
+            UNAUTHORIZED,
+            FORBIDDEN,
+            NOT_FOUND,
+            CONFLICT,
+            INTERNAL_SERVER_ERROR
+        }
+
+        enum Method {
+            GET,
+            POST,
+            PUT,
+            DELETE
+        }
+    }
+
+    package utils {
+        class HeaderMap {
+            - Map<String, String> headers
+
+            + void ingest(String headerLine)
+            + int getContentLength()
+        }
+
+        class Request {
+            - Method method
+            - String path
+            - String pathname
+            - List<String> pathParts
+            - String params
+            - HeaderMap headerMap
+            - String body
+
+            + void setPathname(String pathname)
+        }
+
+        class RequestBuilder {
+            + Request buildRequest(BufferedReader bufferedReader)
+            - void setPathname(Request request, String path)
+            - Method getMethod(String methodString)
+        }
+
+        class Response {
+            - int status
+            - String message
+            - String contentType
+            - String content
+
+            + String get()
+        }
+
+        class Router {
+            - Map<String, String> serviceRegistry
+
+            + void addService(String route, Service service)
+            + Service resolve(String route)
+        }
+    }
+
+    class HttpServer {
+        - Router router
+        - int port
+        - ExecutorService threadPool
+        - Database database
+
+        + void start()
+    }
+
+    class RequestHandler {
+        - Socket clientSocket
+        - Router router
+        - BufferedReader in
+        - BufferedWriter out
+        - Database database
+
+        + void run()
+    }
+}
+
+' Beziehungen am Ende des Diagramms:
+
+core.models.Store -- core.models.Trade
+core.models.Trade -- core.models.cards.Card
+core.models.Shop -- core.models.cards.Package
+
+core.models.cards.Deck -- core.models.cards.Card
+core.models.cards.Stack -- core.models.cards.Card
+core.models.cards.Package -- core.models.cards.Card
+core.models.cards.Element -- core.models.cards.Card
+core.models.cards.Card <|-- core.models.cards.monster.MonsterCard
+core.models.cards.monster.MonsterCard - core.models.cards.monster.Monster
+
+core.service.Service <|.. core.service.SessionService
+core.service.Service <|.. core.service.UserService
+core.service.SessionService --> api.controller.SessionController
+core.service.UserService --> api.controller.UserController
+
+core.models.Battle --> core.models.cards.Card
+core.models.Battle --> core.models.User
+persistence.Database --> core.models.User
+server.utils.Router --> core.service.Service
+server.HttpServer --> server.utils.Router
+server.HttpServer --> persistence.Database
+server.RequestHandler --> server.utils.Router
+server.RequestHandler --> persistence.Database
+server.RequestHandler --> server.utils.Request
+server.RequestHandler --> server.utils.Response
+server.utils.RequestBuilder --> server.utils.Response
+server.utils.RequestBuilder --> server.http.Method
+
+api.controller.SessionController --> server.utils.Request
+api.controller.SessionController --> server.utils.Response
+api.controller.SessionController --> persistence.Database
+api.controller.UserController --> server.utils.Request
+api.controller.UserController --> server.utils.Response
+api.controller.UserController --> persistence.Database
+
+server.utils.Request --> server.utils.HeaderMap
+server.utils.Request --> server.http.Method
+
+api.controller.SessionController --> server.http.HttpStatus
+api.controller.SessionController --> server.http.Method
+api.controller.SessionController --> server.http.ContentType
+api.controller.SessionController --> core.models.User
+
+api.controller.UserController --> server.http.HttpStatus
+api.controller.UserController --> server.http.Method
+api.controller.UserController --> server.http.ContentType
+api.controller.UserController --> core.models.User
+
+core.service.Service --> server.utils.Request
+core.service.Service --> server.utils.Response
+core.service.Service --> persistence.Database
 @enduml

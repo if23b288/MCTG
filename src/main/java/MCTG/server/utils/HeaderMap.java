@@ -18,8 +18,4 @@ public class HeaderMap {
         }
         return Integer.parseInt(header);
     }
-
-    public String print() {
-        return headers.toString();
-    }
 }

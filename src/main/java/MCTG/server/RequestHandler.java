@@ -10,7 +10,6 @@ import MCTG.server.utils.Response;
 import MCTG.server.utils.Router;
 
 public class RequestHandler implements Runnable {
-
     private final Socket clientSocket;
     private final Router router;
     private BufferedReader in;
