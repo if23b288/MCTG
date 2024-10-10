@@ -1,9 +1,9 @@
 package MCTG.core.models.cards;
 
 public abstract class Card {
-    private String name;
+    private final String name;
     private int damage = 0;
-    private Element elementType;
+    private final Element elementType;
 
     public Card(String name, int damage, Element elementType) {
         this.name = name;

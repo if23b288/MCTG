@@ -1,7 +1,10 @@
 package MCTG.core.models.cards;
 
+import lombok.Getter;
+
 import java.util.*;
 
+@Getter
 abstract class CardCollection {
     private List<Card> cards;
 
@@ -17,7 +20,4 @@ abstract class CardCollection {
         this.cards.remove(cardToRemove);
     }
 
-    public List<Card> getCards() {
-        return this.cards;
-    }
 }
