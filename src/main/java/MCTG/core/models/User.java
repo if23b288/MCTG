@@ -11,6 +11,7 @@ public class User {
     private String username;
     @JsonProperty("Password")
     private String password;
+    private String token;
     private Stack stack;
     private Deck deck;
     private int coins = 20;

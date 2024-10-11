@@ -23,4 +23,11 @@ public class Database {
         return null;
     }
 
+    public void addToken(String token, String username) {
+        for (User user : this.users) {
+            if (user.getUsername().equals(username)) {
+                user.setToken(token);
+            }
+        }
+    }
 }

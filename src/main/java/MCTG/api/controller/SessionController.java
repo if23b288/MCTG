@@ -30,6 +30,8 @@ public class SessionController extends Controller {
 
             String token = user.getUsername() + "-mtcgToken";
 
+            database.addToken(token, dbUser.getUsername());
+
             return new Response(
                     HttpStatus.OK,
                     "OK",
