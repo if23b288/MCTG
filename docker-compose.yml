@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  database:
+    build: src/main/resources/database/.
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - 9090:8080
+
+# usage of adminer:
+# http://localhost:9090
+# for server fill in 'database'

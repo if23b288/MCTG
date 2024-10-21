@@ -1,17 +1,36 @@
 package MCTG.server.utils;
 
-import MCTG.core.service.Service;
-
-import java.util.*;
+import MCTG.api.controller.SessionController;
+import MCTG.api.controller.UserController;
+import MCTG.core.models.Users;
+import MCTG.persistence.dao.Dao;
+import MCTG.persistence.dao.UsersDaoDb;
+import MCTG.server.http.ContentType;
+import MCTG.server.http.HttpStatus;
 
 public class Router {
-    private Map<String, Service> serviceRegistry = new HashMap<>();
+    private final Dao<Users> userDao;
+    private final UserController userController;
+    private final SessionController sessionController;
 
-    public void addService(String route, Service service) {
-        this.serviceRegistry.put(route, service);
+    public Router() {
+        userDao = new UsersDaoDb();
+        userController = new UserController(userDao);
+        sessionController = new SessionController(userDao);
     }
 
-    public Service resolve(String route) {
-        return this.serviceRegistry.get(route);
+    public Response resolve(Request request) {
+        if (request.getPathname().equals("/users")) {
+            return userController.handleRequest(request);
+        } else if (request.getPathname().equals("/sessions")) {
+            return sessionController.handleRequest(request);
+        } else {
+            return new Response(
+                    HttpStatus.NOT_FOUND,
+                    "Not Found",
+                    ContentType.PLAIN_TEXT,
+                    ""
+            );
+        }
     }
 }

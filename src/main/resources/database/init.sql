@@ -1,0 +1,13 @@
+CREATE DATABASE mctg;
+--GRANT ALL PRIVILEGES ON DATABASE dist TO user;
+\c mctg
+
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+    username VARCHAR ( 255 ) NOT NULL,
+    password VARCHAR (255 ) NOT NULL,
+    token VARCHAR ( 255 ) NOT NULL,
+    coins INT NOT NULL DEFAULT 20,
+    elo INT NOT NULL DEFAULT 100,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

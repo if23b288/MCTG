@@ -1,7 +1,9 @@
 package MCTG.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import MCTG.server.utils.Request;
+import MCTG.server.utils.Response;
 import lombok.Getter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Getter
 public abstract class Controller {
@@ -10,4 +12,6 @@ public abstract class Controller {
     public Controller() {
         this.objectMapper = new ObjectMapper();
     }
+
+    public abstract Response handleRequest(Request request);
 }

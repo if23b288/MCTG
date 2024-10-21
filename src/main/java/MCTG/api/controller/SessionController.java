@@ -1,36 +1,59 @@
 package MCTG.api.controller;
 
-import MCTG.core.models.User;
-import MCTG.persistence.Database;
+import MCTG.core.models.Users;
+import MCTG.persistence.dao.Dao;
 import MCTG.server.http.ContentType;
 import MCTG.server.http.HttpStatus;
+import MCTG.server.http.Method;
 import MCTG.server.utils.Request;
 import MCTG.server.utils.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.sql.Timestamp;
+import java.util.Optional;
+
 public class SessionController extends Controller {
-    public SessionController() {
+    private final Dao<Users> userDao;
+
+    public SessionController(Dao<Users> userDao) {
         super();
+        this.userDao = userDao;
+    }
+
+    public Response handleRequest(Request request) {
+        // POST /sessions
+        if (request.getMethod() == Method.POST) {
+            return login(request);
+        }
+
+        return new Response(
+            HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                ContentType.JSON,
+                ""
+        );
     }
 
     // POST /sessions
-    public Response login(Request request, Database database) {
+    private Response login(Request request) {
         try {
-            User user = this.getObjectMapper().readValue(request.getBody(), User.class);
-            User dbUser = database.getUser(user.getUsername());
-            if (dbUser == null || !dbUser.getPassword().equals(user.getPassword()))
+            Users user = this.getObjectMapper().readValue(request.getBody(), Users.class);
+            Optional<Users> dbUser = userDao.get(user.getUsername());
+            if (dbUser.isEmpty() || !dbUser.get().getPassword().equals(user.getPassword()))
             {
                 return new Response(
                         HttpStatus.UNAUTHORIZED,
                         "Unauthorized",
                         ContentType.PLAIN_TEXT,
-                        ""
+                        "Login failed"
                 );
             }
 
             String token = user.getUsername() + "-mtcgToken";
-
-            database.addToken(token, dbUser.getUsername());
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            dbUser.get().setToken(token);
+            dbUser.get().setLast_updated(timestamp);
+            userDao.update(dbUser.get());
 
             return new Response(
                     HttpStatus.OK,

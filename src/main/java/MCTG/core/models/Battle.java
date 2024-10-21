@@ -3,10 +3,10 @@ package MCTG.core.models;
 import MCTG.core.models.cards.Card;
 
 public class Battle {
-    private User player1;
-    private User player2;
+    private Users player1;
+    private Users player2;
 
-    public Battle(User player1, User player2) {
+    public Battle(Users player1, Users player2) {
         this.player1 = player1;
         this.player2 = player2;
     }
@@ -27,7 +27,7 @@ public class Battle {
         return;
     }
 
-    private void moveCardToWinner(Card cardToMove, User winner) {
+    private void moveCardToWinner(Card cardToMove, Users winner) {
         return;
     }
 }

@@ -1,25 +1,43 @@
 package MCTG.api.controller;
 
-import MCTG.core.models.User;
-import MCTG.persistence.Database;
+import MCTG.core.models.Users;
+import MCTG.persistence.dao.Dao;
 import MCTG.server.http.ContentType;
 import MCTG.server.http.HttpStatus;
+import MCTG.server.http.Method;
 import MCTG.server.utils.Request;
 import MCTG.server.utils.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.util.List;
+import java.util.Collection;
 
 public class UserController extends Controller {
-    public UserController() {
+    private final Dao<Users> userDao;
+
+    public UserController(Dao<Users> userDao) {
         super();
+        this.userDao = userDao;
+    }
+
+    @Override
+    public Response handleRequest(Request request) {
+        if (request.getMethod() == Method.POST) {
+            return addUser(request);
+        }
+
+        return new Response(
+                HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                ContentType.PLAIN_TEXT,
+                ""
+        );
     }
 
     // POST /users
-    public Response addUser(Request request, Database database) {
+    public Response addUser(Request request) {
         try {
-            List<User> users = database.getUsers();
-            User user = this.getObjectMapper().readValue(request.getBody(), User.class);
+            Collection<Users> users = userDao.getAll();
+            Users user = this.getObjectMapper().readValue(request.getBody(), Users.class);
             if (users.stream().anyMatch(u -> u.getUsername().equals(user.getUsername())))
             {
                 return new Response(
@@ -29,7 +47,7 @@ public class UserController extends Controller {
                         "User already exists"
                 );
             }
-            database.addUser(user);
+            userDao.save(user);
             return new Response(
                     HttpStatus.CREATED,
                     "Created",
