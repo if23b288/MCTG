@@ -18,4 +18,12 @@ public class HeaderMap {
         }
         return Integer.parseInt(header);
     }
+
+    public String getAuthorization() {
+        final String header = headers.get("Authorization");
+        if (header == null) {
+            return "";
+        }
+        return header;
+    }
 }

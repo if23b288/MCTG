@@ -1,8 +1,8 @@
 package MCTG.core.models.cards;
 
 public class SpellCard extends Card {
-    public SpellCard(String name, int damage, Element elementType) {
-        super(name, damage, elementType);
+    public SpellCard(String cId, String name, double damage, Element elementType) {
+        super(cId, name, damage, elementType);
     }
 
     @Override

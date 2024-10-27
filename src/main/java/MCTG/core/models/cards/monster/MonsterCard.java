@@ -2,12 +2,14 @@ package MCTG.core.models.cards.monster;
 
 import MCTG.core.models.cards.Card;
 import MCTG.core.models.cards.Element;
+import lombok.Getter;
 
+@Getter
 public class MonsterCard extends Card {
-    private Monster monsterType;
+    private final Monster monsterType;
 
-    public MonsterCard(String name, int damage, Element elementType, Monster monsterType) {
-        super(name, damage, elementType);
+    public MonsterCard(String cId, String name, double damage, Element elementType, Monster monsterType) {
+        super(cId, name, damage, elementType);
         this.monsterType = monsterType;
     }
 

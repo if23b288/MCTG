@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 
 @Data
 public class Users {
-    private final int id;
     @JsonProperty("Username")
     private String username;
     @JsonProperty("Password")
@@ -21,8 +20,7 @@ public class Users {
     private int elo;
     private Timestamp last_updated;
 
-    public Users(int id, String username, String password, String token, int coins, int elo, Timestamp last_updated) {
-        this.id = id;
+    public Users(String username, String password, String token, int coins, int elo, Timestamp last_updated) {
         this.username = username;
         this.password = password;
         this.token = token;
@@ -32,7 +30,6 @@ public class Users {
     }
 
     public Users() {
-        this.id = 0;
         this.username = "";
         this.password = "";
         this.token = "";

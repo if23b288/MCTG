@@ -1,6 +1,6 @@
 package MCTG.server;
 
-import MCTG.persistence.dao.UsersDaoDb;
+import MCTG.persistence.DbConnection;
 import MCTG.server.utils.Router;
 
 import java.net.ServerSocket;
@@ -23,8 +23,8 @@ public class HttpServer {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.print("Server listening on port " + port + "\n");
             while (true) {
+                DbConnection.initDb();
                 Socket clientSocket = serverSocket.accept();
-                UsersDaoDb.initDb();
                 threadPool.submit(new RequestHandler(clientSocket, this.router));
             }
         } catch (Exception e) {

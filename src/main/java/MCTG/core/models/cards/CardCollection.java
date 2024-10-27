@@ -1,10 +1,12 @@
 package MCTG.core.models.cards;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
 @Getter
+@Setter
 abstract class CardCollection {
     private List<Card> cards;
 
@@ -12,12 +14,11 @@ abstract class CardCollection {
         this.cards = new ArrayList<>();
     }
 
-    public void addCard(Card newCard) {
-        this.cards.add(newCard);
+    public CardCollection(List<Card> cards) {
+        this.cards = cards;
     }
 
     public void removeCard(Card cardToRemove) {
         this.cards.remove(cardToRemove);
     }
-
 }

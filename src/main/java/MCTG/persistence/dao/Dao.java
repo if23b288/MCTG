@@ -1,5 +1,6 @@
 package MCTG.persistence.dao;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -10,16 +11,13 @@ import java.util.Optional;
  */
 // DAO overview see: https://www.baeldung.com/java-dao-pattern
 public interface Dao<T> {
-
     // READ
-    Optional<T> get(int number);
-
     Optional<T> get(String text);
 
     Collection<T> getAll();
 
     // CREATE
-    void save(T t);
+    void save(T t) throws SQLException;
 
     // UPDATE
     void update(T t);

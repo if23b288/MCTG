@@ -1,15 +1,15 @@
 package MCTG.core.models.cards;
 
-public abstract class Card {
-    private final String name;
-    private int damage = 0;
-    private final Element elementType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-    public Card(String name, int damage, Element elementType) {
-        this.name = name;
-        this.damage = damage;
-        this.elementType = elementType;
-    }
+@Data
+@AllArgsConstructor
+public abstract class Card {
+    private final String cId;
+    private final String name;
+    private final double damage;
+    private final Element elementType;
 
     @Override
     public String toString() {

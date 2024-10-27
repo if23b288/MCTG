@@ -3,11 +3,25 @@ CREATE DATABASE mctg;
 \c mctg
 
 CREATE TABLE users (
-    id serial PRIMARY KEY,
-    username VARCHAR ( 255 ) NOT NULL,
-    password VARCHAR (255 ) NOT NULL,
-    token VARCHAR ( 255 ) NOT NULL,
+    username VARCHAR (255) PRIMARY KEY,
+    password VARCHAR (255) NOT NULL,
+    token VARCHAR (255) NOT NULL,
     coins INT NOT NULL DEFAULT 20,
     elo INT NOT NULL DEFAULT 100,
     last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE card {
+    cId VARCHAR (255) PRIMARY KEY,
+    cardname VARCHAR (255) NOT NULL,
+    damage INT NOT NULL,
+    elementType VARCHAR (255) NOT NULL,
+    monsterType VARCHAR (255) DEFAULT NULL,
+};
+
+CREATE TABLE package {
+    pId SERIAL NOT NULL,
+    cId VARCHAR (255) NOT NULL,
+    PRIMARY KEY (pId, cId)
+    FOREIGN KEY (cId) REFERENCES card(cId)
+}

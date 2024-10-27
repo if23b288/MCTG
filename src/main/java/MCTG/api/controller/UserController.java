@@ -9,6 +9,7 @@ import MCTG.server.utils.Request;
 import MCTG.server.utils.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 public class UserController extends Controller {
@@ -62,7 +63,8 @@ public class UserController extends Controller {
                     ContentType.PLAIN_TEXT,
                     ""
             );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
     }
 }
