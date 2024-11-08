@@ -17,22 +17,20 @@ public class AuthorizationService {
             return false;
         }
         String token = bearer.split(" ")[1];
-        Optional<Users> dbUser = userDao.get(token.split("-")[0]);
-        if (dbUser.isEmpty()) {
-            return false;
-        }
-        return dbUser.get().getToken().equals(token);
+        String username = token.split("-")[0];
+        return checkToken(username, token);
     }
 
     public boolean isAuthorized(String username, String bearer) {
-        if (bearer.isEmpty()) {
+        if (username.isEmpty() || bearer.isEmpty()) {
             return false;
         }
         String token = bearer.split(" ")[1];
+        return checkToken(username, token);
+    }
+
+    private boolean checkToken(String username, String token) {
         Optional<Users> dbUser = userDao.get(username);
-        if (dbUser.isEmpty()) {
-            return false;
-        }
-        return dbUser.get().getToken().equals(token);
+        return dbUser.isPresent() && dbUser.get().getToken().equals(token);
     }
 }
