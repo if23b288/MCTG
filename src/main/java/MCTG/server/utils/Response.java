@@ -9,9 +9,9 @@ public class Response {
     private String contentType;
     private String content;
 
-    public Response(HttpStatus status, String message, ContentType contentType, String content) {
+    public Response(HttpStatus status, ContentType contentType, String content) {
         this.status = status.code;
-        this.message = message;
+        this.message = status.message;
         this.contentType = contentType.type;
         this.content = content;
     }

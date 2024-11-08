@@ -7,6 +7,6 @@ public class SpellCard extends Card {
 
     @Override
     public String toString() {
-        return "SpellCard\n------------" + super.toString();
+        return "\nSPELLCARD || " + super.toString();
     }
 }

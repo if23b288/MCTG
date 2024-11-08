@@ -1,6 +1,7 @@
 package MCTG.core.models;
 
 import MCTG.core.models.cards.Card;
+import MCTG.core.models.user.Users;
 
 public class Battle {
     private Users player1;

@@ -2,26 +2,59 @@ CREATE DATABASE mctg;
 --GRANT ALL PRIVILEGES ON DATABASE dist TO user;
 \c mctg
 
-CREATE TABLE users (
-    username VARCHAR (255) PRIMARY KEY,
-    password VARCHAR (255) NOT NULL,
-    token VARCHAR (255) NOT NULL,
+CREATE TABLE IF NOT EXISTS users (
+    username VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL,
     coins INT NOT NULL DEFAULT 20,
     elo INT NOT NULL DEFAULT 100,
     last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE card {
-    cId VARCHAR (255) PRIMARY KEY,
-    cardname VARCHAR (255) NOT NULL,
+CREATE TABLE IF NOT EXISTS card (
+    cId VARCHAR(255) PRIMARY KEY,
+    cardname VARCHAR(255) NOT NULL,
     damage INT NOT NULL,
-    elementType VARCHAR (255) NOT NULL,
-    monsterType VARCHAR (255) DEFAULT NULL,
-};
+    elementType VARCHAR(255) NOT NULL,
+    monsterType VARCHAR(255) DEFAULT NULL,
+);
 
-CREATE TABLE package {
+CREATE TABLE IF NOT EXISTS package (
     pId SERIAL NOT NULL,
-    cId VARCHAR (255) NOT NULL,
-    PRIMARY KEY (pId, cId)
+    cId VARCHAR(255) NOT NULL,
+    PRIMARY KEY (pId, cId),
     FOREIGN KEY (cId) REFERENCES card(cId)
-}
+)
+
+CREATE TABLE IF NOT EXISTS stack (
+    username VARCHAR(255) NOT NULL,
+    cId VARCHAR(255) NOT NULL,
+    PRIMARY KEY (username, cId),
+    FOREIGN KEY (username) REFERENCES users(username),
+    FOREIGN KEY (cId) REFERENCES card(cId)
+)
+
+CREATE TABLE IF NOT EXISTS deck (
+    username VARCHAR(255) NOT NULL,
+    cId VARCHAR(255) NOT NULL,
+    PRIMARY KEY (username, cId),
+    FOREIGN KEY (username) REFERENCES users(username),
+    FOREIGN KEY (cId) REFERENCES card(cId)
+)
+
+CREATE TABLE IF NOT EXISTS profile (
+    username VARCHAR(255) PRIMARY KEY,
+    pName VARCHAR(255),
+    bio TEXT,
+    image VARCHAR(255),
+    FOREIGN KEY (username) REFERENCES users(username)
+)
+
+CREATE TABLE IF NOT EXISTS stats (
+    username VARCHAR(255) PRIMARY KEY,
+    wins INT NOT NULL DEFAULT 0,
+    losses INT NOT NULL DEFAULT 0,
+    draws INT NOT NULL DEFAULT 0,
+    elo INT NOT NULL DEFAULT 100,
+    FOREIGN KEY (username) REFERENCES users(username)
+)

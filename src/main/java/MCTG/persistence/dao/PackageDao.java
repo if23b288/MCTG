@@ -20,7 +20,7 @@ public class PackageDao implements Dao<Package> {
     @Override
     public Optional<Package> get(String pId) {
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                SELECT card.cId, card.name, card.damage, card.element, monster.monsterType
+                SELECT c.cId, c.cardname, c.damage, c.elementType, c.monsterType
                 FROM package
                 JOIN card c on package.cId = c.cId
                 WHERE pId = ?
@@ -28,39 +28,19 @@ public class PackageDao implements Dao<Package> {
         ) {
             statement.setInt(1, Integer.getInteger(pId));
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next()) {
-                List<Card> cards = new ArrayList<>();
-                do {
-                    if (resultSet.getString(5).isEmpty()) {
-                        cards.add(new SpellCard(
-                                resultSet.getString(1),
-                                resultSet.getString(2),
-                                resultSet.getInt(3),
-                                Element.valueOf(resultSet.getString(4))
-                        ));
-                    } else {
-                        cards.add(new MonsterCard(
-                                resultSet.getString(1),
-                                resultSet.getString(2),
-                                resultSet.getInt(3),
-                                Element.valueOf(resultSet.getString(4)),
-                                Monster.valueOf(resultSet.getString(5))
-                        ));
-                    }
-                } while (resultSet.next());
-                return Optional.of(new Package(Integer.getInteger(pId), cards));
-            }
+            List<Card> cards = CardDao.getCardsList(resultSet);
+            return Optional.of(new Package(Integer.getInteger(pId), cards));
         } catch (SQLException exception) {
             exception.printStackTrace();
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     @Override
     public Collection<Package> getAll() {
         List<Package> packages = new ArrayList<>();
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                SELECT pId, card.cId, card.name, card.damage, card.element, monster.monsterType
+                SELECT pId, c.cId, c.cardname, c.damage, c.elementType, c.monsterType
                 FROM package
                 JOIN card c on package.cId = c.cId
                 """)
@@ -77,7 +57,7 @@ public class PackageDao implements Dao<Package> {
                     cards = new ArrayList<>();
                     pId = resultSet.getInt(1);
                 }
-                if (resultSet.getString(5).isEmpty()) {
+                if (resultSet.getString(6).isEmpty()) {
                     cards.add(new SpellCard(
                             resultSet.getString(2),
                             resultSet.getString(3),
@@ -94,7 +74,9 @@ public class PackageDao implements Dao<Package> {
                     ));
                 }
             }
-            packages.add(new Package(pId, cards));
+            if (pId != -1) {
+                packages.add(new Package(pId, cards));
+            }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -140,6 +122,15 @@ public class PackageDao implements Dao<Package> {
 
     @Override
     public void delete(Package p) {
-
+        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
+                DELETE FROM package
+                WHERE pId = ?;
+                """)
+        ) {
+            statement.setInt(1, p.getPId());
+            statement.execute();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 }

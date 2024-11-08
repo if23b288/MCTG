@@ -1,6 +1,6 @@
 package MCTG.persistence.dao;
 
-import MCTG.core.models.Users;
+import MCTG.core.models.user.Users;
 import MCTG.persistence.DbConnection;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ public class UsersDao implements Dao<Users> {
     @Override
     public Optional<Users> get(String username) {
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                SELECT username, password, token, coins, elo, last_updated
+                SELECT username, password, token, coins, last_updated
                 FROM users
                 WHERE username=?
                 """)
@@ -25,8 +25,7 @@ public class UsersDao implements Dao<Users> {
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getInt(4),
-                        resultSet.getInt(5),
-                        resultSet.getTimestamp(6)
+                        resultSet.getTimestamp(5)
                 ));
             }
         } catch (SQLException exception) {
@@ -39,7 +38,7 @@ public class UsersDao implements Dao<Users> {
     public Collection<Users> getAll() {
         ArrayList<Users> result = new ArrayList<>();
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                SELECT username, password, token, coins, elo, last_updated
+                SELECT username, password, token, coins, last_updated
                 FROM users
                 """)
         ) {
@@ -50,8 +49,7 @@ public class UsersDao implements Dao<Users> {
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getInt(4),
-                        resultSet.getInt(5),
-                        resultSet.getTimestamp(6)
+                        resultSet.getTimestamp(5)
                 ));
             }
         } catch (SQLException exception) {
@@ -64,16 +62,15 @@ public class UsersDao implements Dao<Users> {
     public void save(Users user) {
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 INSERT INTO users
-                (username, password, token, coins, elo, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?);
+                (username, password, token, coins, last_updated)
+                VALUES (?, ?, ?, ?, ?);
                 """)
         ) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getToken());
             statement.setInt(4, user.getCoins());
-            statement.setInt(5, user.getElo());
-            statement.setTimestamp(6, user.getLast_updated());
+            statement.setTimestamp(5, user.getLast_updated());
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -84,16 +81,15 @@ public class UsersDao implements Dao<Users> {
     public void update(Users updatedUser) {
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 UPDATE users
-                SET password = ?, token = ?, coins = ?, elo = ?, last_updated = ?
+                SET password = ?, token = ?, coins = ?, last_updated = ?
                 WHERE username = ?;
                 """)
         ) {
             statement.setString(1, updatedUser.getPassword());
             statement.setString(2, updatedUser.getToken());
             statement.setInt(3, updatedUser.getCoins());
-            statement.setInt(4, updatedUser.getElo());
-            statement.setTimestamp(5, updatedUser.getLast_updated());
-            statement.setString(6, updatedUser.getUsername());
+            statement.setTimestamp(4, updatedUser.getLast_updated());
+            statement.setString(5, updatedUser.getUsername());
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();

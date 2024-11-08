@@ -1,6 +1,6 @@
 package MCTG.api.controller;
 
-import MCTG.core.models.Users;
+import MCTG.core.models.user.Users;
 import MCTG.persistence.dao.Dao;
 import MCTG.server.http.ContentType;
 import MCTG.server.http.HttpStatus;
@@ -26,9 +26,8 @@ public class SessionController extends Controller {
             return login(request);
         }
 
-        return new Response(
+        return new Response (
             HttpStatus.BAD_REQUEST,
-                "Bad Request",
                 ContentType.JSON,
                 ""
         );
@@ -41,9 +40,8 @@ public class SessionController extends Controller {
             Optional<Users> dbUser = userDao.get(user.getUsername());
             if (dbUser.isEmpty() || !dbUser.get().getPassword().equals(user.getPassword()))
             {
-                return new Response(
+                return new Response (
                         HttpStatus.UNAUTHORIZED,
-                        "Unauthorized",
                         ContentType.PLAIN_TEXT,
                         "Login failed"
                 );
@@ -55,17 +53,15 @@ public class SessionController extends Controller {
             dbUser.get().setLast_updated(timestamp);
             userDao.update(dbUser.get());
 
-            return new Response(
+            return new Response (
                     HttpStatus.OK,
-                    "OK",
                     ContentType.PLAIN_TEXT,
                     token
             );
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return new Response(
+            return new Response (
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Internal Server Error",
                     ContentType.PLAIN_TEXT,
                     ""
             );

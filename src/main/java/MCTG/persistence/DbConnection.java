@@ -111,7 +111,37 @@ public class DbConnection implements Closeable {
                    cId VARCHAR (255) NOT NULL,
                    PRIMARY KEY (pId, cId),
                    FOREIGN KEY (cId) REFERENCES card(cId)
-                )""";
+                );
+                CREATE TABLE IF NOT EXISTS stack (
+                   username VARCHAR(255) NOT NULL,
+                   cId VARCHAR(255) NOT NULL,
+                   PRIMARY KEY (username, cId),
+                   FOREIGN KEY (username) REFERENCES users(username),
+                   FOREIGN KEY (cId) REFERENCES card(cId)
+                );
+                CREATE TABLE IF NOT EXISTS deck (
+                    username VARCHAR(255) NOT NULL,
+                    cId VARCHAR(255) NOT NULL,
+                    PRIMARY KEY (username, cId),
+                    FOREIGN KEY (username) REFERENCES users(username),
+                    FOREIGN KEY (cId) REFERENCES card(cId)
+                );
+                CREATE TABLE IF NOT EXISTS profile (
+                    username VARCHAR(255) PRIMARY KEY,
+                    pName VARCHAR(255),
+                    bio TEXT,
+                    image VARCHAR(255),
+                    FOREIGN KEY (username) REFERENCES users(username)
+                );
+                CREATE TABLE IF NOT EXISTS stats (
+                    username VARCHAR(255) PRIMARY KEY,
+                    wins INT NOT NULL DEFAULT 0,
+                    losses INT NOT NULL DEFAULT 0,
+                    draws INT NOT NULL DEFAULT 0,
+                    elo INT NOT NULL DEFAULT 100,
+                    FOREIGN KEY (username) REFERENCES users(username)
+                );
+                """;
 
         // create the table
         // PostgreSQL documentation: https://www.postgresqltutorial.com/postgresql-create-table/

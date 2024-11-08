@@ -22,13 +22,14 @@ public class PackageController extends Controller {
 
     @Override
     public Response handleRequest(Request request) {
+        cardController.handleRequest(request);
+        
         if (request.getMethod() == Method.POST) {
             return createPackage(request);
         }
 
-        return new Response(
+        return new Response (
                 HttpStatus.BAD_REQUEST,
-                "Bad Request",
                 ContentType.PLAIN_TEXT,
                 ""
         );
@@ -36,24 +37,24 @@ public class PackageController extends Controller {
 
     private Response createPackage(Request request) {
         try {
-            List<Card> cards = cardController.getCards(request.getBody());
+            List<Card> cards = cardController.getCardsFromJSON(request.getBody());
             Package newPackage = new Package(1, cards);
             packageDao.save(newPackage);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(
+            return new Response (
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "INTERNAL SERVER ERROR",
                     ContentType.PLAIN_TEXT,
                     ""
             );
         }
 
-        return new Response(
+        return new Response (
                 HttpStatus.CREATED,
-                "CREATED",
                 ContentType.JSON,
                 ""
         );
     }
+
+
 }

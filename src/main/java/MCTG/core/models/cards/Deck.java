@@ -1,8 +1,20 @@
 package MCTG.core.models.cards;
 
+import lombok.Data;
+
+import java.util.List;
+
+@Data
 public class Deck extends CardCollection {
+    private String username;
+
     public Deck() {
         super();
+    }
+
+    public Deck(String username, List<Card> cards) {
+        super(cards);
+        this.username = username;
     }
 
     public Card getRandomCard() {

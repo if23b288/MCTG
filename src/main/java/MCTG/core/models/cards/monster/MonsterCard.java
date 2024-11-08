@@ -15,6 +15,6 @@ public class MonsterCard extends Card {
 
     @Override
     public String toString() {
-        return "MonsterCard\n-----------\nMonsterType: " + monsterType + super.toString();
+        return "\nMONSTERCARD || MonsterType: " + monsterType + " | " + super.toString();
     }
 }

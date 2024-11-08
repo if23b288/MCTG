@@ -3,6 +3,7 @@ package MCTG.api.controller;
 import MCTG.core.models.cards.Card;
 import MCTG.core.models.cards.Element;
 import MCTG.core.models.cards.SpellCard;
+import MCTG.core.models.cards.Stack;
 import MCTG.core.models.cards.monster.*;
 import MCTG.persistence.dao.Dao;
 import MCTG.server.http.ContentType;
@@ -15,28 +16,28 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CardController extends Controller {
     private final Dao<Card> cardDao;
+    private final Dao<Stack> stackDao;
 
-    public CardController(Dao<Card> cardDao) {
+    public CardController(Dao<Card> cardDao, Dao<Stack> stackDao) {
         super();
         this.cardDao = cardDao;
+        this.stackDao = stackDao;
     }
 
     @Override
     public Response handleRequest(Request request) {
         if (request.getMethod() == Method.POST) {
             return createCards(request);
+        } else if (request.getMethod() == Method.GET) {
+            return getCards(request);
         }
 
-        return new Response(
+        return new Response (
                 HttpStatus.BAD_REQUEST,
-                "Bad Request",
                 ContentType.PLAIN_TEXT,
                 ""
         );
@@ -44,13 +45,12 @@ public class CardController extends Controller {
 
     private Response createCards(Request request) {
         try {
-            List<Card> cards = getCards(request.getBody());
+            List<Card> cards = getCardsFromJSON(request.getBody());
 
             for (Card card : cards) {
                 if (!createCard(card)) {
-                    return new Response(
+                    return new Response (
                             HttpStatus.CONFLICT,
-                            "CONFLICT",
                             ContentType.PLAIN_TEXT,
                             "Card already exists"
                     );
@@ -58,17 +58,15 @@ public class CardController extends Controller {
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return new Response(
+            return new Response (
                     HttpStatus.BAD_REQUEST,
-                    "BAD REQUEST",
                     ContentType.PLAIN_TEXT,
                     "Invalid JSON"
             );
         }
 
-        return new Response(
+        return new Response (
                 HttpStatus.CREATED,
-                "CREATED",
                 ContentType.JSON,
                 ""
         );
@@ -87,7 +85,7 @@ public class CardController extends Controller {
         }
     }
 
-    public List<Card> getCards(String json) throws JsonProcessingException {
+    public List<Card> getCardsFromJSON(String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map<String, Object>> cardDataList = objectMapper.readValue(json, new TypeReference<>() {});
         List<Card> cards = new ArrayList<>();
@@ -106,5 +104,23 @@ public class CardController extends Controller {
             }
         }
         return cards;
+    }
+
+    private Response getCards(Request request) {
+        String username = request.getHeaderMap().getAuthorization().split(" ")[1].split("-")[0];
+        Optional<Stack> stack = stackDao.get(username);
+
+        if (stack.isEmpty()) {
+            return new Response (
+                    HttpStatus.OK,
+                    ContentType.PLAIN_TEXT,
+                    "No cards in stack"
+            );
+        }
+        return new Response (
+                HttpStatus.OK,
+                ContentType.PLAIN_TEXT,
+                stack.get().getCards().toString()
+        );
     }
 }

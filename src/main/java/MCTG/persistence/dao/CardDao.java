@@ -47,35 +47,18 @@ public class CardDao implements Dao<Card> {
 
     @Override
     public Collection<Card> getAll() {
-        ArrayList<Card> result = new ArrayList<>();
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
                 SELECT cId, cardname, damage, elementType, monsterType
                 FROM card
                 """)
         ) {
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()) {
-                if (resultSet.getString(5).isEmpty()) {
-                    result.add(new SpellCard (
-                            resultSet.getString(1),
-                            resultSet.getString(2),
-                            resultSet.getInt(3),
-                            Element.valueOf(resultSet.getString(4))
-                    ));
-                } else {
-                    result.add(new MonsterCard(
-                            resultSet.getString(1),
-                            resultSet.getString(2),
-                            resultSet.getInt(3),
-                            Element.valueOf(resultSet.getString(4)),
-                            Monster.valueOf(resultSet.getString(5))
-                    ));
-                }
-            }
+            return getCardsList(resultSet);
         } catch (SQLException exception) {
             exception.printStackTrace();
+            return new ArrayList<>();
         }
-        return result;
+
     }
 
     @Override
@@ -117,5 +100,33 @@ public class CardDao implements Dao<Card> {
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
+    }
+
+    static List<Card> getCardsList(ResultSet resultSet) {
+        List<Card> cards = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                if (resultSet.getString(5).isEmpty()) {
+                    cards.add(new SpellCard(
+                            resultSet.getString(1),
+                            resultSet.getString(2),
+                            resultSet.getInt(3),
+                            Element.valueOf(resultSet.getString(4))
+                    ));
+                } else {
+                    cards.add(new MonsterCard(
+                            resultSet.getString(1),
+                            resultSet.getString(2),
+                            resultSet.getInt(3),
+                            Element.valueOf(resultSet.getString(4)),
+                            Monster.valueOf(resultSet.getString(5))
+                    ));
+                }
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return cards;
     }
 }

@@ -1,4 +1,4 @@
-package MCTG.core.models;
+package MCTG.core.models.user;
 
 import MCTG.core.models.cards.Deck;
 import MCTG.core.models.cards.Stack;
@@ -17,15 +17,13 @@ public class Users {
     private Stack stack;
     private Deck deck;
     private int coins;
-    private int elo;
     private Timestamp last_updated;
 
-    public Users(String username, String password, String token, int coins, int elo, Timestamp last_updated) {
+    public Users(String username, String password, String token, int coins, Timestamp last_updated) {
         this.username = username;
         this.password = password;
         this.token = token;
         this.coins = coins;
-        this.elo = elo;
         this.last_updated = last_updated;
     }
 
@@ -34,7 +32,6 @@ public class Users {
         this.password = "";
         this.token = "";
         this.coins = 20;
-        this.elo = 100;
         this.last_updated = new Timestamp(System.currentTimeMillis());
     }
 }

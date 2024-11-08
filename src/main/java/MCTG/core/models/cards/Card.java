@@ -13,6 +13,6 @@ public abstract class Card {
 
     @Override
     public String toString() {
-        return "\nCard: " + name + "\nDamage: " + damage + "\nElement: " + elementType;
+        return "Card: " + name + " | Damage: " + damage + " | Element: " + elementType + "\n";
     }
 }
