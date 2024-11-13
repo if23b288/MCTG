@@ -1,8 +1,6 @@
 package MCTG.api.controller;
 
-import MCTG.core.models.cards.Card;
-import MCTG.core.models.cards.Element;
-import MCTG.core.models.cards.SpellCard;
+import MCTG.core.models.cards.*;
 import MCTG.core.models.cards.Stack;
 import MCTG.core.models.cards.monster.*;
 import MCTG.persistence.dao.Dao;
@@ -21,11 +19,13 @@ import java.util.*;
 public class CardController extends Controller {
     private final Dao<Card> cardDao;
     private final Dao<Stack> stackDao;
+    private final Dao<Deck> deckDao;
 
-    public CardController(Dao<Card> cardDao, Dao<Stack> stackDao) {
+    public CardController(Dao<Card> cardDao, Dao<Stack> stackDao, Dao<Deck> deckDao) {
         super();
         this.cardDao = cardDao;
         this.stackDao = stackDao;
+        this.deckDao = deckDao;
     }
 
     @Override
@@ -109,8 +109,9 @@ public class CardController extends Controller {
     private Response getCards(Request request) {
         String username = request.getHeaderMap().getAuthorization().split(" ")[1].split("-")[0];
         Optional<Stack> stack = stackDao.get(username);
+        Optional<Deck> deck = deckDao.get(username);
 
-        if (stack.isEmpty()) {
+        if (stack.isEmpty() && deck.isEmpty()) {
             return new Response (
                     HttpStatus.OK,
                     ContentType.PLAIN_TEXT,
@@ -120,7 +121,7 @@ public class CardController extends Controller {
         return new Response (
                 HttpStatus.OK,
                 ContentType.PLAIN_TEXT,
-                stack.get().getCards().toString()
+                stack.get().getCards().toString() + "\n" + deck.get().getCards().toString()
         );
     }
 }

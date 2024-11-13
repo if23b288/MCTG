@@ -34,7 +34,7 @@ public class Router {
         // CONTROLLERS
         UserController userController = new UserController(userDao, profileDao);
         SessionController sessionController = new SessionController(userDao);
-        CardController cardController = new CardController(cardDao, stackDao);
+        CardController cardController = new CardController(cardDao, stackDao, deckDao);
         PackageController packageController = new PackageController(packageDao, cardController);
         TransactionController transactionController = new TransactionController(packageDao, stackDao, userDao);
         DeckController deckController = new DeckController(deckDao, stackDao);
