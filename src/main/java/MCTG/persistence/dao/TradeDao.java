@@ -105,18 +105,8 @@ public class TradeDao implements Dao<Trade> {
     }
 
     @Override
-    public void update(Trade stats) {
-        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                UPDATE stats
-                SET wins = ?, losses = ?, draws = ?, elo = ?
-                WHERE username = ?
-                """)
-        ) {
+    public void update(Trade trade) {
 
-            statement.execute();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
     }
 
     @Override
