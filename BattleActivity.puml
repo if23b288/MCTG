@@ -1,0 +1,25 @@
+@startuml
+start
+:Battle.startBattle();
+while (both decks not empty & round < 100)
+  :shuffle both decks;
+  :draw first card each;
+  if (one of them is a SpellCard?) then (yes)
+    :apply effectiveness
+          to damage;
+  endif
+  :  apply special
+  rules to damage;
+  :compare damage;
+  if (is there a winner?) then (yes)
+    :move card to winner deck;
+  endif
+endwhile
+if (is there a winner?) then (yes)
+    :      winner gets
+    +3 elo and +5 coins;
+    :loser gets -5 elo;
+endif
+stop
+
+@enduml

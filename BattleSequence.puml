@@ -1,0 +1,31 @@
+@startuml
+actor Client1
+actor Client2
+entity Server
+control BattleController
+control BattleService
+entity Battle
+
+Client1 -> Server : Send Battle Request
+activate Server
+Server -> BattleController : Process Request
+activate BattleController
+Client2 -> Server : Send Battle Request
+BattleController -> BattleService : Find or Create Battle
+activate BattleService
+Server -> BattleController : Process Request
+BattleService -> Battle : Create New Battle
+activate Battle
+BattleController -> BattleService : Find open Battle
+BattleService -> Battle : Join Battle
+Battle -> Battle : Start Battle
+Battle -> BattleService : Battle ended
+deactivate Battle
+BattleService -> BattleController : Battle ended
+deactivate BattleService
+BattleController -> Server : Battle ended
+deactivate BattleController
+Server -> Client1 : Send Response
+Server -> Client2 : Send Response
+deactivate Server
+@enduml

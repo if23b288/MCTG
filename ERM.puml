@@ -1,0 +1,140 @@
+@startuml
+entity "Users" as Users {
+    * username : VARCHAR(255)
+    --
+    password : VARCHAR(255)
+    token : VARCHAR(255)
+    coins : INT
+    elo : INT
+    last_updated : TIMESTAMP
+}
+
+entity "Card" as Card {
+    * cId : VARCHAR(255)
+    --
+    cardname : VARCHAR(255)
+    damage : DOUBLE PRECISION
+    elementType : VARCHAR(255)
+    monsterType : VARCHAR(255)
+}
+
+entity "Package" as Package {
+    * pId : SERIAL
+    * cId : VARCHAR(255)
+}
+
+entity "Stack" as Stack {
+    * username : VARCHAR(255)
+    * cId : VARCHAR(255)
+}
+
+entity "Deck" as Deck {
+    * username : VARCHAR(255)
+    * cId : VARCHAR(255)
+}
+
+entity "Profile" as Profile {
+    * username : VARCHAR(255)
+    --
+    pName : VARCHAR(255)
+    bio : TEXT
+    image : VARCHAR(255)
+}
+
+entity "Stats" as Stats {
+    * username : VARCHAR(255)
+    --
+    wins : INT
+    losses : INT
+    draws : INT
+    elo : INT
+}
+
+entity "Trade" as Trade {
+    * id : VARCHAR(255)
+    --
+    username : VARCHAR(255)
+    cId : VARCHAR(255)
+    type : VARCHAR(255)
+    minDamage : DOUBLE PRECISION
+}
+
+@startuml
+
+entity "Users" as Users {
+    * username : VARCHAR(255)
+    --
+    password : VARCHAR(255)
+    token : VARCHAR(255)
+    coins : INT
+    elo : INT
+    last_updated : TIMESTAMP
+}
+
+entity "Card" as Card {
+    * cId : VARCHAR(255)
+    --
+    cardname : VARCHAR(255)
+    damage : DOUBLE PRECISION
+    elementType : VARCHAR(255)
+    monsterType : VARCHAR(255)
+}
+
+entity "Package" as Package {
+    * pId : INT SERIAL
+    * cId : VARCHAR(255)
+    --
+}
+
+entity "Stack" as Stack {
+    * username : VARCHAR(255)
+    * cId : VARCHAR(255)
+    --
+}
+
+entity "Deck" as Deck {
+    * username : VARCHAR(255)
+    * cId : VARCHAR(255)
+    --
+}
+
+entity "Profile" as Profile {
+    * username : VARCHAR(255)
+    --
+    pName : VARCHAR(255)
+    bio : TEXT
+    image : VARCHAR(255)
+}
+
+entity "Stats" as Stats {
+    * username : VARCHAR(255)
+    --
+    wins : INT
+    losses : INT
+    draws : INT
+    elo : INT
+}
+
+entity "Trade" as Trade {
+    * id : VARCHAR(255)
+    --
+    username : VARCHAR(255)
+    cId : VARCHAR(255)
+    type : VARCHAR(255)
+    minDamage : DOUBLE PRECISION
+}
+
+Users ||--o{ Stack : "has"
+Users ||--o{ Deck : "has"
+Users ||--|| Profile : "has"
+Users ||--|| Stats : "has"
+Users ||--o{ Trade : "initiates"
+
+Card ||--o{ Package : "is part of"
+Card ||--o{ Stack : "is in"
+Card ||--o{ Deck : "is in"
+Card ||--o{ Trade : "is traded"
+
+@enduml
+
+@enduml
