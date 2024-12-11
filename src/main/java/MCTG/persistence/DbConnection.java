@@ -59,10 +59,6 @@ public class DbConnection implements Closeable {
         }
     }
 
-    public static boolean executeSql(Connection connection, String sql) throws SQLException {
-        return executeSql(connection, sql, false);
-    }
-
     @Override
     public void close() {
         if( connection!=null ) {
@@ -86,11 +82,8 @@ public class DbConnection implements Closeable {
         try (Connection connection = getInstance().connect("")) {
             executeSql(connection, "DROP DATABASE mctg", true );
             executeSql(connection,  "CREATE DATABASE mctg", true );
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
 
-        String sql = """
+            String sql = """
                 CREATE TABLE IF NOT EXISTS users (
                    username VARCHAR (255) PRIMARY KEY,
                    password VARCHAR (255) NOT NULL,
@@ -102,7 +95,7 @@ public class DbConnection implements Closeable {
                 CREATE TABLE IF NOT EXISTS card (
                    cId VARCHAR (255) PRIMARY KEY,
                    cardname VARCHAR (255) NOT NULL,
-                   damage INT NOT NULL,
+                   damage DOUBLE PRECISION NOT NULL,
                    elementType VARCHAR (255) NOT NULL,
                    monsterType VARCHAR (255) DEFAULT NULL
                 );
@@ -141,12 +134,17 @@ public class DbConnection implements Closeable {
                     elo INT NOT NULL DEFAULT 100,
                     FOREIGN KEY (username) REFERENCES users(username)
                 );
+                CREATE TABLE IF NOT EXISTS trade (
+                    id VARCHAR(255) PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    cId VARCHAR(255) NOT NULL,
+                    type VARCHAR(255) NOT NULL,
+                    minDamage DOUBLE PRECISION NOT NULL,
+                    FOREIGN KEY (username) REFERENCES users(username),
+                    FOREIGN KEY (cId) REFERENCES card(cId)
+                );
                 """;
-
-        // create the table
-        // PostgreSQL documentation: https://www.postgresqltutorial.com/postgresql-create-table/
-        try {
-            getInstance().executeSql(sql);
+            executeSql(connection, sql, false);
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

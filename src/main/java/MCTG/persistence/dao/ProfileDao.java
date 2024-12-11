@@ -57,11 +57,24 @@ public class ProfileDao implements Dao<Profile> {
 
     @Override
     public void update(Profile profile) {
-
+        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
+                UPDATE profile
+                SET pName = ?, bio = ?, image = ?
+                WHERE username = ?
+                """)
+        ) {
+            statement.setString(1, profile.getPName());
+            statement.setString(2, profile.getBio());
+            statement.setString(3, profile.getImage());
+            statement.setString(4, profile.getUsername());
+            statement.execute();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     @Override
-    public void delete(Profile profile) {
+    public void delete(String username) {
 
     }
 }

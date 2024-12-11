@@ -23,5 +23,5 @@ public interface Dao<T> {
     void update(T t);
 
     // DELETE
-    void delete(T t);
+    void delete(String id);
 }

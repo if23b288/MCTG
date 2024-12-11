@@ -26,10 +26,10 @@ public class PackageDao implements Dao<Package> {
                 WHERE pId = ?
                 """)
         ) {
-            statement.setInt(1, Integer.getInteger(pId));
+            statement.setInt(1, Integer.parseInt(pId));
             ResultSet resultSet = statement.executeQuery();
             List<Card> cards = CardDao.getCardsList(resultSet);
-            return Optional.of(new Package(Integer.getInteger(pId), cards));
+            return Optional.of(new Package(Integer.parseInt(pId), cards));
         } catch (SQLException exception) {
             exception.printStackTrace();
             return Optional.empty();
@@ -121,14 +121,13 @@ public class PackageDao implements Dao<Package> {
     }
 
     @Override
-    public void delete(Package p) {
+    public void delete(String id) {
         try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                DELETE FROM package
-                WHERE pId = ?;
+                DELETE FROM package WHERE pId = ?
                 """)
         ) {
-            statement.setInt(1, p.getPId());
-            statement.execute();
+            statement.setInt(1, Integer.parseInt(id));
+            statement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

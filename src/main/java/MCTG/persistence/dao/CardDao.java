@@ -89,17 +89,8 @@ public class CardDao implements Dao<Card> {
     public void update(Card card) { }
 
     @Override
-    public void delete(Card card) {
-        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                DELETE FROM card
-                WHERE cId = ?;
-                """)
-        ) {
-            statement.setString(1, card.getCId());
-            statement.execute();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public void delete(String id) {
+
     }
 
     static List<Card> getCardsList(ResultSet resultSet) {

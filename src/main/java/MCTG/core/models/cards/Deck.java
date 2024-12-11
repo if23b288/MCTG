@@ -1,10 +1,13 @@
 package MCTG.core.models.cards;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Deck extends CardCollection {
     private String username;
 
@@ -17,9 +20,16 @@ public class Deck extends CardCollection {
         this.username = username;
     }
 
-    public Card getRandomCard() {
-        // return random card from super.cards
-        return super.getCards().get((int) (Math.random() * super.getCards().size()));
+    public void shuffle() {
+        List<Card> cards = super.getCards();
+        Collections.shuffle(cards);
+        super.setCards(cards);
+    }
+
+    public void addCard(Card cardToAdd) {
+        List<Card> cards = super.getCards();
+        cards.add(cardToAdd);
+        super.setCards(cards);
     }
 
     public void removeCard(Card cardToRemove) {

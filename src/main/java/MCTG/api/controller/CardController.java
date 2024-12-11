@@ -12,11 +12,15 @@ import MCTG.server.utils.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.*;
 
 public class CardController extends Controller {
+    private static final Logger LOGGER = LogManager.getLogger("CardController");
+
     private final Dao<Card> cardDao;
     private final Dao<Stack> stackDao;
     private final Dao<Deck> deckDao;
@@ -30,12 +34,13 @@ public class CardController extends Controller {
 
     @Override
     public Response handleRequest(Request request) {
-        if (request.getMethod() == Method.POST) {
+        if (request.getMethod() == Method.POST) {  // POST /cards
             return createCards(request);
-        } else if (request.getMethod() == Method.GET) {
+        } else if (request.getMethod() == Method.GET) {  // GET /cards
             return getCards(request);
         }
 
+        LOGGER.warn("Invalid method");
         return new Response (
                 HttpStatus.BAD_REQUEST,
                 ContentType.PLAIN_TEXT,
@@ -52,16 +57,16 @@ public class CardController extends Controller {
                     return new Response (
                             HttpStatus.CONFLICT,
                             ContentType.PLAIN_TEXT,
-                            "Card already exists"
+                            ""
                     );
                 }
             }
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            LOGGER.error("Invalid JSON", e);
             return new Response (
                     HttpStatus.BAD_REQUEST,
                     ContentType.PLAIN_TEXT,
-                    "Invalid JSON"
+                    ""
             );
         }
 
@@ -76,12 +81,14 @@ public class CardController extends Controller {
         try {
             Collection<Card> cards = cardDao.getAll();
             if (cards.stream().anyMatch(c -> c.getCId().equals(newCard.getCId()))) {
+                LOGGER.warn("Card already exists");
                 return false;
             }
             cardDao.save(newCard);
             return true;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Failed to create card", e);
+            return false;
         }
     }
 
@@ -111,17 +118,20 @@ public class CardController extends Controller {
         Optional<Stack> stack = stackDao.get(username);
         Optional<Deck> deck = deckDao.get(username);
 
-        if (stack.isEmpty() && deck.isEmpty()) {
+        if (stack.get().getCards().isEmpty() && deck.get().getCards().isEmpty()) {
             return new Response (
                     HttpStatus.OK,
                     ContentType.PLAIN_TEXT,
-                    "No cards in stack"
+                    "[]"
             );
         }
+        List<Card> allCards = stack.get().getCards();
+        allCards.addAll(deck.get().getCards());
+
         return new Response (
                 HttpStatus.OK,
                 ContentType.PLAIN_TEXT,
-                stack.get().getCards().toString() + "\n" + deck.get().getCards().toString()
+                allCards.toString()
         );
     }
 }

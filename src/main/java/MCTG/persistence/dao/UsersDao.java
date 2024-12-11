@@ -97,16 +97,7 @@ public class UsersDao implements Dao<Users> {
     }
 
     @Override
-    public void delete(Users user) {
-        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                DELETE FROM users
-                WHERE username = ?;
-                """)
-        ) {
-            statement.setString(1, user.getUsername());
-            statement.execute();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public void delete(String username) {
+
     }
 }

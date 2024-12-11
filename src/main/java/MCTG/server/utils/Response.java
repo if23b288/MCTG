@@ -2,7 +2,9 @@ package MCTG.server.utils;
 
 import MCTG.server.http.ContentType;
 import MCTG.server.http.HttpStatus;
+import lombok.Data;
 
+@Data
 public class Response {
     private int status;
     private String message;

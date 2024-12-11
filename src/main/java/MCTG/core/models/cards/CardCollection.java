@@ -15,7 +15,7 @@ abstract class CardCollection {
     }
 
     public CardCollection(List<Card> cards) {
-        this.cards = cards;
+        this.cards = new ArrayList<>(cards);
     }
 
     public void removeCard(Card cardToRemove) {

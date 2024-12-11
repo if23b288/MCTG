@@ -15,7 +15,3 @@ services:
       - database
     ports:
       - 9090:8080
-
-# usage of adminer:
-# http://localhost:9090
-# for server fill in 'database'

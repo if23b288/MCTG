@@ -8,10 +8,14 @@ import MCTG.server.http.HttpStatus;
 import MCTG.server.http.Method;
 import MCTG.server.utils.Request;
 import MCTG.server.utils.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
 public class StatsController extends Controller {
+    private static final Logger LOGGER = LogManager.getLogger("StatsController");
+
     private final Dao<Stats> statsDao;
     private final ScoreboardService scoreboardService;
 
@@ -24,9 +28,9 @@ public class StatsController extends Controller {
     @Override
     public Response handleRequest(Request request) {
         if (request.getMethod() == Method.GET) {
-            if (request.getPathParts().getFirst().equals("stats")) {
+            if (request.getPathParts().getFirst().equals("stats")) { // GET /stats
                 return getStats(request);
-            } else if (request.getPathParts().getFirst().equals("scoreboard")) {
+            } else if (request.getPathParts().getFirst().equals("scoreboard")) {  // GET /scoreboard
                 return new Response(
                         HttpStatus.OK,
                         ContentType.PLAIN_TEXT,
@@ -34,7 +38,7 @@ public class StatsController extends Controller {
                 );
             }
         }
-
+        LOGGER.warn("Invalid method");
         return new Response(
                 HttpStatus.BAD_REQUEST,
                 ContentType.PLAIN_TEXT,

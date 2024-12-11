@@ -8,10 +8,14 @@ import MCTG.server.http.Method;
 import MCTG.server.utils.Request;
 import MCTG.server.utils.Response;
 import MCTG.core.models.cards.Package;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class PackageController extends Controller {
+    private static final Logger LOGGER = LogManager.getLogger("PackageController");
+
     private final Dao<Package> packageDao;
     private final CardController cardController;
 
@@ -24,10 +28,10 @@ public class PackageController extends Controller {
     public Response handleRequest(Request request) {
         cardController.handleRequest(request);
         
-        if (request.getMethod() == Method.POST) {
+        if (request.getMethod() == Method.POST) {  // POST /packages
             return createPackage(request);
         }
-
+        LOGGER.warn("Invalid method");
         return new Response (
                 HttpStatus.BAD_REQUEST,
                 ContentType.PLAIN_TEXT,
@@ -41,7 +45,7 @@ public class PackageController extends Controller {
             Package newPackage = new Package(1, cards);
             packageDao.save(newPackage);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error creating package", e);
             return new Response (
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     ContentType.PLAIN_TEXT,
@@ -55,6 +59,4 @@ public class PackageController extends Controller {
                 ""
         );
     }
-
-
 }

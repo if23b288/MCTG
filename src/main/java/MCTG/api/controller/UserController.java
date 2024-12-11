@@ -10,21 +10,25 @@ import MCTG.server.http.Method;
 import MCTG.server.utils.Request;
 import MCTG.server.utils.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
 
 public class UserController extends Controller {
+    private static final Logger LOGGER = LogManager.getLogger("UserController");
+
     private final Dao<Users> userDao;
     private final Dao<Profile> profileDao;
     private final AuthorizationService authorizationService;
 
-    public UserController(Dao<Users> userDao, Dao<Profile> profileDao) {
+    public UserController(Dao<Users> userDao, Dao<Profile> profileDao, AuthorizationService authorizationService) {
         super();
         this.userDao = userDao;
         this.profileDao = profileDao;
-        this.authorizationService = new AuthorizationService(userDao);
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -34,23 +38,24 @@ public class UserController extends Controller {
             String token = request.getHeaderMap().getAuthorization();
             if (!authorizationService.isAuthorized(username, token))
             {
+                LOGGER.warn("Unauthorized access");
                 return new Response (
                         HttpStatus.UNAUTHORIZED,
                         ContentType.PLAIN_TEXT,
                         ""
                 );
             }
-            if (request.getMethod() == Method.PUT) {
+            if (request.getMethod() == Method.PUT) {  // PUT /users/{username}
                 return saveProfile(username, request);
-            } else if (request.getMethod() == Method.GET) {
+            } else if (request.getMethod() == Method.GET) {  // GET /users/{username}
                 return getProfile(username, request);
             }
         }
 
-        if (request.getMethod() == Method.POST) {
+        if (request.getMethod() == Method.POST) {  // POST /users
             return addUser(request);
         }
-
+        LOGGER.warn("Invalid method");
         return new Response (
                 HttpStatus.BAD_REQUEST,
                 ContentType.PLAIN_TEXT,
@@ -58,7 +63,6 @@ public class UserController extends Controller {
         );
     }
 
-    // GET /users/{username}
     private Response getProfile(String username, Request request) {
         Optional<Profile> profile = profileDao.get(username);
         return new Response(
@@ -68,7 +72,6 @@ public class UserController extends Controller {
         );
     }
 
-    // PUT /users/{username}
     private Response saveProfile(String username, Request request) {
         try {
             Profile profile = this.getObjectMapper().readValue(request.getBody(), Profile.class);
@@ -79,15 +82,13 @@ public class UserController extends Controller {
                     ContentType.PLAIN_TEXT,
                     ""
             );
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (JsonProcessingException | SQLException e) {
+            LOGGER.error("Error parsing JSON", e);
             return new Response (
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     ContentType.PLAIN_TEXT,
                     ""
             );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -98,6 +99,7 @@ public class UserController extends Controller {
             Users user = this.getObjectMapper().readValue(request.getBody(), Users.class);
             if (users.stream().anyMatch(u -> u.getUsername().equals(user.getUsername())))
             {
+                LOGGER.warn("User already exists");
                 return new Response (
                         HttpStatus.CONFLICT,
                         ContentType.PLAIN_TEXT,
@@ -110,15 +112,13 @@ public class UserController extends Controller {
                     ContentType.PLAIN_TEXT,
                     ""
             );
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (JsonProcessingException | SQLException e) {
+            LOGGER.error("Error parsing JSON", e);
             return new Response (
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     ContentType.PLAIN_TEXT,
                     ""
             );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 }

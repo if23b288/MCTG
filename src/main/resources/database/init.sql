@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS package (
     cId VARCHAR(255) NOT NULL,
     PRIMARY KEY (pId, cId),
     FOREIGN KEY (cId) REFERENCES card(cId)
-)
+);
 
 CREATE TABLE IF NOT EXISTS stack (
     username VARCHAR(255) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS stack (
     PRIMARY KEY (username, cId),
     FOREIGN KEY (username) REFERENCES users(username),
     FOREIGN KEY (cId) REFERENCES card(cId)
-)
+);
 
 CREATE TABLE IF NOT EXISTS deck (
     username VARCHAR(255) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS deck (
     PRIMARY KEY (username, cId),
     FOREIGN KEY (username) REFERENCES users(username),
     FOREIGN KEY (cId) REFERENCES card(cId)
-)
+);
 
 CREATE TABLE IF NOT EXISTS profile (
     username VARCHAR(255) PRIMARY KEY,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS profile (
     bio TEXT,
     image VARCHAR(255),
     FOREIGN KEY (username) REFERENCES users(username)
-)
+);
 
 CREATE TABLE IF NOT EXISTS stats (
     username VARCHAR(255) PRIMARY KEY,
@@ -57,4 +57,4 @@ CREATE TABLE IF NOT EXISTS stats (
     draws INT NOT NULL DEFAULT 0,
     elo INT NOT NULL DEFAULT 100,
     FOREIGN KEY (username) REFERENCES users(username)
-)
+);

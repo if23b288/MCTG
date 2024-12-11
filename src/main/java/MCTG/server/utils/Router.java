@@ -1,6 +1,7 @@
 package MCTG.server.utils;
 
 import MCTG.api.controller.*;
+import MCTG.core.models.Trade;
 import MCTG.core.models.user.Profile;
 import MCTG.core.models.user.Stats;
 import MCTG.core.models.user.Users;
@@ -31,16 +32,19 @@ public class Router {
         Dao<Deck> deckDao = new DeckDao();
         Dao<Profile> profileDao = new ProfileDao();
         Dao<Stats> statsDao = new StatsDao();
+        Dao<Trade> tradeDao = new TradeDao();
+        // SERVICES
+        authorizationService = new AuthorizationService(userDao);
         // CONTROLLERS
-        UserController userController = new UserController(userDao, profileDao);
+        UserController userController = new UserController(userDao, profileDao, authorizationService);
         SessionController sessionController = new SessionController(userDao);
         CardController cardController = new CardController(cardDao, stackDao, deckDao);
         PackageController packageController = new PackageController(packageDao, cardController);
         TransactionController transactionController = new TransactionController(packageDao, stackDao, userDao);
         DeckController deckController = new DeckController(deckDao, stackDao);
         StatsController statsController = new StatsController(statsDao);
-        // SERVICES
-        authorizationService = new AuthorizationService(userDao);
+        BattleController battleController = new BattleController(userDao, deckDao, statsDao);
+        TradingController tradingController = new TradingController(tradeDao, stackDao, cardDao);
         // ROUTES
         routes.add(new Route("users", userController, false));
         routes.add(new Route("sessions", sessionController, false));
@@ -50,6 +54,8 @@ public class Router {
         routes.add(new Route("deck", deckController, true));
         routes.add(new Route("stats", statsController, true));
         routes.add(new Route("scoreboard", statsController, true));
+        routes.add(new Route("battles", battleController, true));
+        routes.add(new Route("tradings", tradingController, true));
     }
 
     public Response resolve(Request request) {

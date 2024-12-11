@@ -63,16 +63,44 @@ public class StatsDao implements Dao<Stats> {
 
     @Override
     public void save(Stats stats) throws SQLException {
+        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
+                INSERT INTO stats (username, wins, losses, draws, elo)
+                VALUES (?, ?, ?, ?, ?)
+                """)
+        ) {
+            statement.setString(1, stats.getUsername());
+            statement.setInt(2, stats.getWins());
+            statement.setInt(3, stats.getLosses());
+            statement.setInt(4, stats.getDraws());
+            statement.setInt(5, stats.getElo());
 
+            statement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     @Override
     public void update(Stats stats) {
-
+        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
+                UPDATE stats
+                SET wins = ?, losses = ?, draws = ?, elo = ?
+                WHERE username = ?
+                """)
+        ) {
+            statement.setInt(1, stats.getWins());
+            statement.setInt(2, stats.getLosses());
+            statement.setInt(3, stats.getDraws());
+            statement.setInt(4, stats.getElo());
+            statement.setString(5, stats.getUsername());
+            statement.execute();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     @Override
-    public void delete(Stats stats) {
+    public void delete(String username) {
 
     }
 }

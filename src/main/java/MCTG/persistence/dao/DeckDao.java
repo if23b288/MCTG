@@ -25,6 +25,7 @@ public class DeckDao implements Dao<Deck> {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             List<Card> cards = CardDao.getCardsList(resultSet);
+            deck.setUsername(username);
             deck.setCards(cards);
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -61,7 +62,7 @@ public class DeckDao implements Dao<Deck> {
     }
 
     @Override
-    public void delete(Deck deck) {
+    public void delete(String id) {
 
     }
 }

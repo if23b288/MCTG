@@ -98,17 +98,11 @@ public class StackDao implements Dao<Stack> {
     }
 
     @Override
-    public void delete(Stack stack) {
-        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement("""
-                DELETE FROM stack
-                WHERE cId = ?;
-                """)
-        ) {
-            for (Card card : stack.getCards()) {
-                statement.setString(1, card.getCId());
-                statement.addBatch();
-            }
-            statement.executeBatch();
+    public void delete(String cId) {
+        String sql = "DELETE FROM stack WHERE cId = ?";
+        try (PreparedStatement statement = DbConnection.getInstance().prepareStatement(sql)) {
+            statement.setString(1, cId);
+            statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

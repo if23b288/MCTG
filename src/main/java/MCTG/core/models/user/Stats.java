@@ -32,4 +32,9 @@ public class Stats {
         Stats stats = (Stats) obj;
         return stats.wins == wins && stats.losses == losses && stats.draws == draws && stats.elo == elo;
     }
+
+    @Override
+    public int hashCode() {
+        return wins + losses + draws + elo;
+    }
 }
