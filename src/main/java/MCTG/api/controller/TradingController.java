@@ -176,7 +176,7 @@ public class TradingController extends Controller {
             // delete trade
             tradeDao.delete(tId);
             return new Response(
-                    HttpStatus.OK,
+                    HttpStatus.CREATED,
                     ContentType.PLAIN_TEXT,
                     ""
             );
