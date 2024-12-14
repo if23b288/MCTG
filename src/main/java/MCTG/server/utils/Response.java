@@ -20,8 +20,6 @@ public class Response {
 
     public String get() {
         return "HTTP/1.1 " + this.status + " " + this.message + "\r\n" +
-                "Cache-Control: max-age=0\r\n" +
-                "Connection: close\r\n" +
                 "Content-Type: " + this.contentType + "\r\n" +
                 "Content-Length: " + this.content.length() + "\r\n" +
                 "\r\n" +
