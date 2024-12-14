@@ -78,12 +78,14 @@ public class DbConnection implements Closeable {
     }
 
     public static void initDb() {
-        // re-create the database
-        try (Connection connection = getInstance().connect("")) {
+        try (Connection connection = getInstance().connect("postgres")) {
             executeSql(connection, "DROP DATABASE mctg", true );
             executeSql(connection,  "CREATE DATABASE mctg", true );
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
-            String sql = """
+        String sql = """
                 CREATE TABLE IF NOT EXISTS users (
                    username VARCHAR (255) PRIMARY KEY,
                    password VARCHAR (255) NOT NULL,
@@ -144,7 +146,8 @@ public class DbConnection implements Closeable {
                     FOREIGN KEY (cId) REFERENCES card(cId)
                 );
                 """;
-            executeSql(connection, sql, false);
+        try {
+            getInstance().executeSql(sql);
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
