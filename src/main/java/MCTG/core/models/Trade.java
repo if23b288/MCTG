@@ -25,7 +25,7 @@ public class Trade {
     }
 
     public boolean acceptTrade(Card card) {
-        if (card.getDamage() < minimumDamage) {
+        if (card.getDamage() <= minimumDamage) {
             System.out.println("Card damage too low");
             return false;
         }
@@ -43,7 +43,7 @@ public class Trade {
     @Override
     public String toString() {
         return "\nTrade Request " + id +
-                "\nfrom " + username + " (" + cardToTrade.getName() + "/" + cardToTrade.getDamage() + ")" +
-                "\nrequests " + type + "/>" + minimumDamage + "\n";
+                " from " + username + " (" + cardToTrade.getName() + "/" + cardToTrade.getDamage() + ")" +
+                " requests " + type + "/>=" + minimumDamage + "\n";
     }
 }
