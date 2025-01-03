@@ -24,6 +24,9 @@ public class Battle {
     private int roundsPlayed;
     private Users winner;
 
+    private Card player1CardLastRound;
+    private Card player2CardLastRound;
+
     public Battle(Users player1) {
         this.id = generateId();
         this.player1 = player1;
@@ -31,6 +34,8 @@ public class Battle {
         this.status = BattleStatus.WAITING;
         this.roundsPlayed = 0;
         this.winner = null;
+        this.player1CardLastRound = null;
+        this.player2CardLastRound = null;
 
         LOGGER.info("Player1: ({}) created Battle {}", player1.getUsername(), this.id);
     }
@@ -93,8 +98,8 @@ public class Battle {
         LOGGER.info("--------------------------Playing round {}--------------------------", (this.roundsPlayed + 1));
         Card card1 = player1.getDeck().getCards().getFirst();
         Card card2 = player2.getDeck().getCards().getFirst();
-        double damage1 = card1.getDamage();
-        double damage2 = card2.getDamage();
+        double damage1 = bonusFeature(1, card1);
+        double damage2 = bonusFeature(2, card2);
         if (card1 instanceof SpellCard || card2 instanceof SpellCard) {
             damage1 = damageAfterEffectiveness(card1, damage1, card2);
             damage2 = damageAfterEffectiveness(card2, damage2, card1);
@@ -109,6 +114,23 @@ public class Battle {
         } else if (damage2 > damage1) {
             LOGGER.info("{} won the round", player2.getUsername());
             moveCardToWinner(card1, player2, player1);
+        }
+        player1CardLastRound = card1;
+        player2CardLastRound = card2;
+    }
+
+    private double bonusFeature(int player, Card card) {
+        LOGGER.info("Bonus feature for player {}: {}", player, card);
+        Card lastPlayedCard = (player == 1 ? player1CardLastRound : player2CardLastRound);
+        if (lastPlayedCard == null) {
+            LOGGER.info("first round");
+            return card.getDamage();
+        }
+        if (lastPlayedCard.equals(card)) {
+            LOGGER.info("same card -> damage reduced: {} to {}", card.getDamage(), card.getDamage() * 0.75);
+            return card.getDamage() * 0.75;
+        } else {
+            return card.getDamage();
         }
     }
 
